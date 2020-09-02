@@ -58,8 +58,8 @@ def save():
   new_username = create_new_username()
 
   new_file = open(NEW_ACCOUNT, 'w')
-  new_file.write(test[0][0] + ':' + test[1][0] + '\n')
-  new_file.write(test[0][0] + ':' + test[1][0] + '\n')
+  new_file.write(new_username + ':' + test[1][0])
+  #new_file.write(test[0][0] + ':' + test[1][0])
 
 def login():
   test = parser_account()
