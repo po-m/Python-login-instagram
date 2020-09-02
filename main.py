@@ -1,48 +1,51 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
 
-___username = 'amora1bewixon73903'
-___password = 'jBteeAWNQ8Fle3'
-____new_username = 'weweb242g3'
 
-NUM_OF_NAME = 2
-NUM_OF_SURNAME = 2
-NUM_OF_ACCOUT = 1
+# save new username with old password to new .txt file, cz 1st used username will'be lost, cz it will be replaced
+# add adder to photos
 
-def parse_name():
+NUM_OF_NAME = 2700
+NUM_OF_SURNAME = 2700
+NUM_OF_ACCOUT = 3
+NUM_OF_NUM = 3
+NUM_OF_MAX_NUM = 9
+ACCOUNT_PATH = 'data/account.txt'
+NAME_PATH = 'data/name.txt'
+SURNAME_PATH = 'data/surname.txt'
+NEW_ACCOUNT = 'data/new_account.txt'
+INSTAGRAM_INDEX_PATH = 'https://www.instagram.com/'
+INSTAGRAM_EDIT_PATH = 'https://www.instagram.com/accounts/edit/'
+
+def parser_name():
   name = []
-
-  with open('name.txt', 'r') as data:
+  with open(NAME_PATH, 'r') as data:
     for line in data:
       parser_name = line[:-1]
       name.append(parser_name)
   return name[random.randrange(0, NUM_OF_NAME)]
 
-def parse_surname():
+def parser_surname():
   surname = []
-
-  with open('surname.txt', 'r') as data:
+  with open(SURNAME_PATH, 'r') as data:
     for line in data:
       parser_surname = line[:-1]
       surname.append(parser_surname)
   return surname[random.randrange(0, NUM_OF_SURNAME)]
 
-def create_a_user():
-  to_name = parse_name() + ' ' + parse_surname()
-  #to_username = parse_name() + parse_surname()
-  print(to_name) 
-  #print(to_username)
+def create_new_username():
+  random_list = []
+  for i in range(0, NUM_OF_NUM):
+    number = random.randint(1, NUM_OF_MAX_NUM)
+    random_list.append(number)
+  return parser_name() + '_' + parser_surname() + str(random_list[0]) + str(random_list[1]) + str(random_list[2])
 
 def parser_account():
   username = []
   password = []
-
-  with open('account.txt', 'r') as data:
+  with open(ACCOUNT_PATH, 'r') as data:
     for line in data:
       line = line.strip()
       parser_username, parser_password = line.split(':')
@@ -50,48 +53,59 @@ def parser_account():
       password.append(parser_password)
   return username, password
 
+def save():
+  test = parser_account()
+  new_username = create_new_username()
+
+  new_file = open(NEW_ACCOUNT, 'w')
+  new_file.write(test[0][0] + ':' + test[1][0] + '\n')
+  new_file.write(test[0][0] + ':' + test[1][0] + '\n')
+
 def login():
-  username, password = parser_account()
-  user = create_a_user()
+  test = parser_account()
+  new_username = create_new_username()
   
-  for i in range(0, NUM_OF_ACCOUT):
-    browser = webdriver.Chrome('chromedriver')
+  username = test[0][0]
+  password = test[1][0]
 
-    browser.get('https://www.instagram.com/')
-    time.sleep(random.randrange(3, 5))
+  #for i in range(0, NUM_OF_ACCOUT):
+  browser = webdriver.Chrome('chromedriver')
 
-    username_input = browser.find_element_by_name('username')
-    username_input.clear()
-    username_input.send_keys(username)
+  browser.get(INSTAGRAM_INDEX_PATH)
+  time.sleep(random.randrange(3, 5))
 
-    time.sleep(2)
+  print('Username: ' + str(username))
+  username_input = browser.find_element_by_name('username')
+  username_input.clear()
+  username_input.send_keys(username)
+  
 
-    password_input = browser.find_element_by_name('password')
-    password_input.clear()
-    password_input.send_keys(password)
-    password_input.send_keys(Keys.ENTER)
+  time.sleep(2)
 
-    time.sleep(2)
+  print('Password: ' + str(password))
+  password_input = browser.find_element_by_name('password')
+  password_input.clear()
+  password_input.send_keys(password)
+  password_input.send_keys(Keys.ENTER)
 
-    browser.get("https://www.instagram.com/accounts/edit/")
+  time.sleep(2)
 
-    input_new_username = browser.find_element_by_id('pepName')
-    input_new_username.clear()
-    input_new_username.send_keys(user)
+  browser.get(INSTAGRAM_EDIT_PATH)
 
-    input_new_second_username = browser.find_element_by_id('pepUsername')
-    input_new_second_username.clear()
-    input_new_second_username.send_keys(user)
+    # input_new_username = browser.find_element_by_id('pepName')
+    # input_new_username.clear()
+    # input_new_username.send_keys(user)
 
-    time.sleep(2)
+  print('New username: ' + str(new_username))
+  input_new_second_username = browser.find_element_by_id('pepUsername')
+  input_new_second_username.clear()
+  input_new_second_username.send_keys(new_username)
 
-    browser.find_element_by_xpath('//*[@id="react-root"]/section/main/div/article/form/div[11]/div/div/button').click()
+  #time.sleep(2)
 
-    print('User: ' + user)
-
-    time.sleep(1000)
+    #browser.find_element_by_xpath('//*[@id="react-root"]/section/main/div/article/form/div[11]/div/div/button').click()
 
 def main():
-  create_a_user()
+  save()
 
 main()
